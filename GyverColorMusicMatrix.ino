@@ -33,15 +33,6 @@ void setup() {
 }
 
 void loop() {
- /* bool btnState = !digitalRead(3);
-    if (btnState && !flag) {  // обработчик нажатия
-    flag = true;
-    if (counter > 4)
-       counter = 1;
-    else
-       counter++;
-  }*/
-
   currentValue = digitalRead(3);
   if (currentValue != prevValue) {
     // Что-то изменилось, здесь возможна зона неопределенности
@@ -63,9 +54,6 @@ void loop() {
  // case 4: waveForm(); break;
   case 4: firePalette(); break;
   }
- /* if (!btnState && flag) {  // обработчик отпускания
-    flag = false;  
-  }*/
 }
 
 void spectrum()
