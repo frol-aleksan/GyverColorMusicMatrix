@@ -1,14 +1,16 @@
-#define STRIP_PIN     2     // пин ленты
 #define SOUND_PIN    A0     // пин звука
-#define SHOW_MAX      1     // 1/0 - показывать плавающие точки максимума
+#define STRIP_PIN     2     // пин ленты
+#define BUTTON_PIN    3     // пин кнопки
+#define SHOW_MAX      1     // 1/0 - показывать/не показывать плавающие точки максимума
 #define COLOR_MULT  -15     // шаг изменения цветовой палитры столбика
 #define COLOR_STEP    3     // шаг движения палитры столбика (по времени)
 #define COLON_SIZE   16     // высота матрицы
 #define COLON_AMOUNT 16     // ширина матрицы
 #define BRIGHT      128     // яркость ленты до 255
-#define LEDS_AM COLON_SIZE * COLON_AMOUNT
-#define P_SPEED       2       // скорость движения
+#define LEDS_AM     COLON_SIZE * COLON_AMOUNT  //вычисляемое количество светодиодов в матрице
+#define P_SPEED       2     // скорость движения
 #define START_HUE     0     // цвет огня (0.. 255). 0 красный, 150 синий, 200 розовый
+#define COLOR_DEBTH   3
 
 #include <FastLED.h>
 #include <microLED.h>
@@ -24,22 +26,21 @@ int16_t noise;
 byte curColor = 0; 
 uint8_t counter = 1;
 int currentValue, prevValue;
-uint8_t COLORSTEP;
+uint8_t COLORSTEP = 3;
 
 void setup() {
   Serial.begin(9600);
-  // put your setup code here, to run once:
   strip.setBrightness(BRIGHT);     // яркость ленты
-  pinMode(3, INPUT_PULLUP);
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
 }
 
 void loop() {
-  currentValue = digitalRead(3);
+  currentValue = digitalRead(BUTTON_PIN);
   if (currentValue != prevValue) {
     // Что-то изменилось, здесь возможна зона неопределенности
-    delay(1000);  // Делаем задержку, именно поэтому эффекты переключаются с запозданием, зато плата не виснет
+    delay(1000);  // Делаем задержку, именно поэтому эффекты переключаются с секундным запозданием, зато плата не виснет
     // А вот теперь спокойно считываем значение, считая, что нестабильность исчезла
-    currentValue = digitalRead(3);
+    currentValue = digitalRead(BUTTON_PIN);
     counter++;
     if (counter == 4)
          COLORSTEP = random(120,250); // шаг цвета, пусть генерируется произвольно
@@ -57,7 +58,6 @@ void loop() {
 
 void spectrum()
 {
-  #define COLOR_DEBTH 3
   sound.setVolMax(100);
   sound.setVolK(30);
   if (sound.tick()) {   // если анализ звука завершён (~10мс)
@@ -92,12 +92,11 @@ void spectrum()
         strip.leds[COLON_SIZE*2 * col + COLON_SIZE - 1 - maxs[col] / 10] = mGreen;  // вниз от центра
       }
     }
-    strip.show(); // обновляем ленту
+    strip.show();
   }
 }
 
 void analizerNoise() {
-  #define COLOR_DEBTH 3
   sound.setVolMax(100);
   sound.setVolK(30);
   if (sound.tick()) {   // если анализ звука завершён (~10мс)
@@ -132,7 +131,7 @@ void analizerNoise() {
         strip.leds[COLON_SIZE * col + COLON_SIZE / 2 - 1 - maxs[col] / 10] = mGreen;  // вниз от центра
       }
     }
-    strip.show();  // обновляем ленту
+    strip.show();
   }
 }
 
@@ -154,7 +153,6 @@ void waveForm() {
         strip.leds[COLON_SIZE * col + COLON_SIZE / 2 - 1 - i] = color;  // вниз от центра
       }
     }
-    // выводим
     strip.show();
   }
 }
@@ -177,7 +175,6 @@ void runningLigts() {
     mData color = mWheel8(curColor, sound.getVol());
     // красим P_SPEED первых светодиодов
     for (int i = 0; i < P_SPEED; i++) strip.set(i, color);
-    // выводим
     strip.show();
   }
 }
