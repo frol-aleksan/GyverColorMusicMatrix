@@ -4,8 +4,8 @@
 #define SHOW_MAX      1     // 1/0 - показывать/не показывать плавающие точки максимума
 #define COLOR_MULT  -15     // шаг изменения цветовой палитры столбика
 #define COLOR_STEP    3     // шаг движения палитры столбика (по времени)
-#define COLON_SIZE   16     // высота матрицы
-#define COLON_AMOUNT 16     // ширина матрицы
+#define COLON_SIZE   10     // высота матрицы
+#define COLON_AMOUNT 20     // ширина матрицы
 #define BRIGHT      128     // яркость ленты до 255
 #define LEDS_AM     COLON_SIZE * COLON_AMOUNT  //вычисляемое количество светодиодов в матрице
 #define P_SPEED       2     // скорость движения
